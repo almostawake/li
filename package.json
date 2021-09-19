@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "li": "node -e 'require(\"./li.js\").li_LOCAL()' $(<../li.txt)"
-},
+    "runJob": "node -e 'require(\"./li.js\").runJob_LOCAL()' $(<../li.txt)"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/almostawake/li.git"
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/almostawake/li/issues"
   },
-  "homepage": "https://github.com/almostawake/li#readme"
+  "homepage": "https://github.com/almostawake/li#readme",
+  "dependencies": {
+    "puppeteer": "^10.2.0"
+  }
 }
