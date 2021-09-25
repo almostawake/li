@@ -8,6 +8,10 @@ exports.readProfiles = async (req, res) => {
     //todo loop through each profile in "profiles", scrape something
     //todo clean up browser.close()
     //todo return an array of scraped profiles
+    for (const profile of req.body.profiles) {
+        console.log(`reading ${profile}`)
+        await readProfile(page, profile);
+    }
     res.status(200).send('ok');
 }
 
@@ -28,6 +32,11 @@ setup = async (cookies) => {
     await takeScreenshot(page, '01-onload');
 
     return page;
+}
+
+readProfile = async (page, profile) => {
+    await page.goto(`https://www.linkedin.com/in/${profile}/`, { waitUntil: 'networkidle2' });
+    await takeScreenshot(page, `02-${profile}`);
 }
 
 takeScreenshot = async (page, filename) => {
