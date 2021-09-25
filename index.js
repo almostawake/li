@@ -1,74 +1,39 @@
+const { Storage } = require('@google-cloud/storage');
 const puppeteer = require('puppeteer');
 
-exports.runJob_LOCAL = async () => {
 
-    const username = process.argv[1];
-    const password = process.argv[2];
-    const job = JSON.parse(process.argv[3]);
-
-    await runJob(username, password, job);
-
+exports.readProfiles = async (req, res) => {
+    console.log('started readProfiles');
+    const page = await setup(req.body.cookies);
+    //todo loop through each profile in "profiles", scrape something
+    //todo clean up browser.close()
+    //todo return an array of scraped profiles
+    res.status(200).send('ok');
 }
 
-runJob = async (username, password, job) => {
+setup = async (cookies) => {
 
-    // Set up browser and page
-    const browser = await puppeteer.launch({
-        args: ['--lang=en-au,en', '--no-sandbox'],
-        ignoreDefaultArgs: ['--disable-extensions']
-    });
+    // Initialise browser, page
+    const browser = await puppeteer.launch({ args: ['--lang=en-au,en', '--no-sandbox'] });
     const page = await browser.newPage();
     await page.setViewport({ width: 2048, height: 1300 });
     await page.setDefaultTimeout(10000);
+    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36');
+    await page.setCookie(...cookies);
 
     // Navigate to the login page
-    await page.goto('https://www.linkedin.com/login', { waitUntil: 'networkidle0' });
+    await page.goto('https://www.linkedin.com/feed/', { waitUntil: 'networkidle2' });
 
-    // Login
-    await page.type('#username', username);
-    await page.type('#password', password);
+    // Take a screenshot to Google Cloud Storage
+    await takeScreenshot(page, '01-onload');
 
-    await Promise.all([
-        page.waitForNavigation({ waitUntil: 'networkidle0' }),
-        page.click('#btnLogon_field')
-    ]);
-
-    // Should be logged in, throw an error if we're not
-    console.log('checking login worked');
-    const [logOffCheck] = await page.$x('//span[text()="Log off"]');
-    //  if (!logOffCheck) screenshotAndThrowError(page, 'not-logged-in', 'something went wrong with login');
-    if (!logOffCheck) throw new Error('not logged in for some reason');
-
-
-    // Scrape selected accounts, synchronously for now (could be done in multiple tabs/pages?)
-    console.log(`\nAccount list to scrape: [${accounts}]`);
-    const accountTransactionScrapesArray = [];
-    for (const account of accounts) {
-        const payload = await scrapeAccount(account, page);
-        accountTransactionScrapesArray.push(payload);
-    }
-
-    // Log out
-    console.log('\nLogging out');
-    await page.goto('https://www.commbank.com.au/retail/netbank/home/', { waitUntil: 'networkidle0' });
-    const [logOffHandle] = (await page.$x('//span[text()="Log off"]'));
-    await logOffHandle.click();
-    await page.waitFor(1000);
-    await browser.close();
-
-    console.info('Logged out, exiting scrapeAll')
-    return accountTransactionScrapesArray;
-
+    return page;
 }
 
-exports.runJob_HTTP = (req, res) => {
-    runJob (req.params)
-}
-
-exports.readProfile_HTTP = (req, res) => {
-    res.status(200).send("ok");
-}
-
-readProfile = (page, profileId) => {
-    console.log(profileId);
+takeScreenshot = async (page, filename) => {
+    const storage = new Storage();
+    const screenshotBinary = await page.screenshot({ encoding: 'binary' });
+    const bucket = storage.bucket('almostawake-screenshots');
+    const file = bucket.file(`${filename}.png`);
+    await file.save(screenshotBinary, { metadata: { contentType: 'image/png' }, });
 }
