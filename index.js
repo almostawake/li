@@ -50,7 +50,13 @@ readProfile = async (page, profileUserId) => {
     const profileUserName = await page.$eval('h1.text-heading-xlarge', h1 => h1.textContent);
     const profileTagline = await page.$eval('.text-body-medium.break-words', div => div.innerText);
     const profileConnectionDistance = await page.$eval('.distance-badge .dist-value', span => span.innerText);
-    return { profileUserId, profileUserName, profileTagline, profileConnectionDistance };
+    const profileArea = await page.$eval('.text-body-small.inline.t-black--light.break-words', span => span.innerText);
+    const connectionLink = await page.$eval('ul.pv-top-card--list.pv-top-card--list-bullet.display-flex.pb1>li.text-body-small > a.ember-view', a => a.href);
+    await page.goto(`https://www.linkedin.com/in/${profileUserId}/detail/contact-info`, { waitUntil: 'networkidle2' });
+    const contactLinks = await page.$$eval('.pv-contact-info__contact-link', anchors => anchors.map(anchor => [anchor.href]));
+    await page.goto(connectionLink, { waitUntil: 'networkidle2' });
+    const connectionLinks = await page.$$eval('.entity-result__title-text>.app-aware-link', links => links.map(link => [link.innerText.split("\n")[0], link.href]));
+    return { profileUserId, profileUserName, profileTagline, profileConnectionDistance, profileArea, contactLinks, connectionLinks};
 }
 
 // if required, take screenshots to Google Cloud Storage bucket "almostawake-screenshots"
