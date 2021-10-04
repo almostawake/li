@@ -84,3 +84,60 @@ These are the steps I've gone through to get to this stage (for future reference
     - `npm install prettier --save-dev`
     - `"format": "prettier --write \"./src/**/*.ts{,?}\""`
     - `npm run format` - fixes up format problems (double quotes instead of single, spacing etc)
+
+## Cloud Shell Setup
+
+The steps I went through in order to get the code working on GCP cloud shell
+
+- Open Cloud Shell (I'm using the bankscrape project I'd set up)
+- cd into `~/cloudshell_open` and checkout project `git clone https://github.com/almostawake/li.git`
+- cd into the created `li` directory and check for this branch `git branch -a`
+- switch to this branch `git checkout --track origin/feature/marc` and check `git branch`
+- In your home directory (i.e. `cd ~`, or cd `/home/marc` for me. You can find out the home directory by `cd $HOME` and 
+  `pwd`). Create/edit the file `.customize_environment`. My file looks as follows:
+
+_TODO: this is not working at the moment!_
+```shell
+#!/bin/sh
+sudo -u $USER echo "### Starting Customise environment ###"
+
+apt-get update
+
+# Libraries required for puppeteer
+apt-get install -y libxss1
+apt-get install -y libgbm-dev
+
+#apt-get install -y gconf-service \
+#  libasound2 \
+#  libatk1.0-0 \
+#  libatk-bridge2.0-0 \
+#  libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+
+
+# Install Node 14 and check
+sudo -i su $USER -c '. /usr/local/nvm/nvm.sh && nvm install 14'
+sudo -i su $USER -c '. /usr/local/nvm/nvm.sh && nvm use 14 --silent'
+sudo -i su $USER -c '. /usr/local/nvm/nvm.sh && nvm alias default node'
+sudo su $USER -c 'node --version'
+sudo su $USER -c 'npm --version'
+
+# Install Typescript and check
+sudo -u $USER npm install -g typescript
+sudo -u $USER tsc --version
+
+# Install Firebase and check
+sudo -u $USER npm install -g firebase-tools
+sudo -u $USER firebase --version
+
+sudo -u $USER echo "### Customise Environment Completed! ###"
+```
+
+- You can either restart the cloudshell to initiate the above, or run the commands manually in the 
+  shell to check the all work (the firebase stuff is from the bankscrape code). You can check 
+  everything worked correctly with `cat /var/log/customize_environment`
+
+## Theia debug setup
+
+The following is the setup for the default cloud shell editor (Theia).
+
+- Todo!
