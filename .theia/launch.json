@@ -1,19 +1,19 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "node",
+      "type": "node-terminal",
       "request": "launch",
-      "name": "Linked In Local",
+      "name": "Linked In Debug (Local)",
       "cwd": "${workspaceFolder}/",
       "skipFiles": [
-          "<node_internals>/**"
+        "<node_internals>/**"
       ],
+      "openDebug": "openOnDebugBreak",
+      "internalConsoleOptions": "openOnSessionStart",
       "localRoot": "${workspaceFolder}/",
       "remoteRoot": "${workspaceFolder}/",
-      "program": "${workspaceFolder}/src/index.ts",
+      "command": "npm run start-functions",
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ]

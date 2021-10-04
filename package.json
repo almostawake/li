@@ -18,6 +18,9 @@
   "bugs": {
     "url": "https://github.com/almostawake/li/issues"
   },
+  "engines": {
+    "node": "14"
+  },
   "homepage": "https://github.com/almostawake/li#readme",
   "dependencies": {
     "@google-cloud/storage": "^5.14.2",
