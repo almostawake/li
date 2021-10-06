@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Linked In Debug (Local)",
+      "cwd": "${workspaceFolder}/",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "openDebug": "openOnDebugBreak",
+      "internalConsoleOptions": "openOnSessionStart",
+      "localRoot": "${workspaceFolder}/",
+      "remoteRoot": "${workspaceFolder}/",
+      "command": "npm run start-functions",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ]
+    }
+  ]
+}
