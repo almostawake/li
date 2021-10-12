@@ -3,14 +3,14 @@ import { Storage } from '@google-cloud/storage';
 import puppeteer, { Page, Protocol } from 'puppeteer';
 
 const takeScreenshots = false;
-interface IResults { 
+interface IResults {
     cookieUserId: string | undefined
-    profiles: any []
- };
+    profiles: any[]
+};
 
-export const readProfiles = async (req: Request, res:Response) => {
+export const readProfiles = async (req: Request, res: Response) => {
     console.log('started readProfiles');
-    const results:IResults = {
+    const results: IResults = {
         cookieUserId: "",
         profiles: []
     };
@@ -63,11 +63,11 @@ const readProfile = async (page: Page, profileUserId: string) => {
     const contactLinks = await page.$$eval('.pv-contact-info__contact-link', anchors => anchors.map(anchor => [(anchor as HTMLAnchorElement).href]));
     await page.goto(connectionLink, { waitUntil: 'networkidle2' });
     const connectionLinks = await page.$$eval('.entity-result__title-text>.app-aware-link', links => links.map(link => [(link as HTMLAnchorElement).innerText.split("\n")[0], (link as HTMLAnchorElement).href]));
-    return { profileUserId, profileUserName, profileTagline, profileConnectionDistance, profileArea, contactLinks, connectionLinks};
+    return { profileUserId, profileUserName, profileTagline, profileConnectionDistance, profileArea, contactLinks, connectionLinks };
 }
 
 // if required, take screenshots to Google Cloud Storage bucket "almostawake-screenshots"
-const takeScreenshot = async (page:Page, filename:string) => {
+const takeScreenshot = async (page: Page, filename: string) => {
     if (!takeScreenshots) return;
     const storage = new Storage();
     const screenshotBinary = await page.screenshot({ encoding: 'binary' });
